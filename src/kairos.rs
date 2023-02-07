@@ -15,7 +15,12 @@ impl EventHandler for Handler {
     }
 
     async fn message(&self, ctx: Context, message: Message) {
-        println!("{} sent a message: {}", message.author, message.content);
+        println!("{} sent a message in channel {}", message.author, message.channel(&ctx).await.expect("Channel from cache"));
+
+        let content = &message.content;
+
+        // Match to regex??
+        // Determine if is a specific date, or if is time of current date
     }
 }
 
