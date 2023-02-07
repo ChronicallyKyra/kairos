@@ -20,19 +20,21 @@ impl EventHandler for Handler {
 
         let content = &message.content;
 
-        let reg = Regex::new(r"^\d{4}-\d{2}-\d{2}$").expect("Valid regex");
+        let reg = Regex::new(r"\d+:\d{2}").unwrap();
         if let Some(matches) = Regex::find(&reg, content) {
-            match convert::parse(&matches.as_str()) {
+            match convert::parse_time(&matches.as_str()) {
                 Some(timestamp) => {
                     // Timestamp always has to be datetime, so if date can't be parsed, current date should be inferred
                     // and vice versa
                     // Insert into message
-    
-                    let stamp = timestamp.short_date();
+
+                    let stamp = timestamp.to_short_time();
+                    println!("{}", stamp);
 
                     let edited = reg.replace(content, stamp).to_string();
     
-                    message.edit(ctx, | m | m.content(edited)).await.expect("Message edited");
+                    // message.edit(ctx, | m | m.content(edited)).await.expect("Message edited");
+                    message.reply(ctx, edited).await.unwrap();
                 }
                 _ => {}
             }
