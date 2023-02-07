@@ -3,6 +3,7 @@ use dotenv::dotenv;
 use std::env::var;
 
 mod kairos;
+mod convert;
 
 #[tokio::main]
 async fn main() {

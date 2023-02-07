@@ -2,10 +2,10 @@ use serenity::async_trait;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 use serenity::model::channel::Message;
-use serenity::framework::standard::macros::{group, hook};
+// use serenity::framework::standard::macros::{group, hook};
 use serenity::framework::standard::StandardFramework;
 
-
+use crate::convert;
 
 struct Handler;
 #[async_trait]
@@ -17,7 +17,7 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, message: Message) {
         println!("{} sent a message in channel {}", message.author, message.channel(&ctx).await.expect("Channel from cache"));
 
-        let content = &message.content;
+        let content = message.content;
 
         // Match to regex??
         // Determine if is a specific date, or if is time of current date
