@@ -4,8 +4,9 @@ use serenity::prelude::*;
 use serenity::model::channel::Message;
 // use serenity::framework::standard::macros::{group, hook};
 use serenity::framework::standard::StandardFramework;
+use regex::Regex;
 
-use crate::convert;
+use crate::convert::{self, DiscordTimestamp};
 
 struct Handler;
 #[async_trait]
@@ -14,13 +15,28 @@ impl EventHandler for Handler {
         println!("Connected to user {}", ready.user.name);
     }
 
-    async fn message(&self, ctx: Context, message: Message) {
+    async fn message(&self, ctx: Context, mut message: Message) {
         println!("{} sent a message in channel {}", message.author, message.channel(&ctx).await.expect("Channel from cache"));
 
-        let content = message.content;
+        let content = &message.content;
 
-        // Match to regex??
-        // Determine if is a specific date, or if is time of current date
+        let reg = Regex::new(r"^\d{4}-\d{2}-\d{2}$").expect("Valid regex");
+        if let Some(matches) = Regex::find(&reg, content) {
+            match convert::parse(&matches.as_str()) {
+                Some(timestamp) => {
+                    // Timestamp always has to be datetime, so if date can't be parsed, current date should be inferred
+                    // and vice versa
+                    // Insert into message
+    
+                    let stamp = timestamp.short_date();
+
+                    let edited = reg.replace(content, stamp).to_string();
+    
+                    message.edit(ctx, | m | m.content(edited)).await.expect("Message edited");
+                }
+                _ => {}
+            }
+        }
     }
 }
 
