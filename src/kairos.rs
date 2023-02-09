@@ -15,7 +15,7 @@ impl EventHandler for Handler {
         println!("Connected to user {}", ready.user.name);
     }
 
-    async fn message(&self, ctx: Context, mut message: Message) {
+    async fn message(&self, ctx: Context, message: Message) {
         println!("{} sent a message in channel {}", message.author, message.channel(&ctx).await.expect("Channel from cache"));
 
         let content = &message.content;
